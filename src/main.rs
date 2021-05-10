@@ -19,7 +19,7 @@ fn main() {
     let ip_address = args.value_of("ip").unwrap();
 
     {
-        let mut socket = UdpSocket::bind(ip_address).expect("Could not bind to IP address");
+        let socket = UdpSocket::bind(ip_address).expect("Could not bind to IP address");
 
         println!("{}: Bound to IP {}", APP_NAME_SHORT, ip_address);
 
@@ -27,21 +27,25 @@ fn main() {
             println!("{}: Enter message to send. Enter blank message to close", APP_NAME_SHORT);
             let mut input = String::new();
             let bytes = std::io::stdin().read_line(&mut input).expect("Error reading input");
-            
-            // remove EOL characters
-            if let Some('\n') = input.chars().next_back() {
-                input.pop();
-            } else if let Some('\r') = input.chars().next_back() {
-                input.pop();
-            }
 
-            if input == "" {
-                break;
+            if input.len() > MAX_MSG_SIZE as usize {
+                println!("{}: Max message size is {}", APP_NAME_SHORT, MAX_MSG_SIZE);
+            } else {
+                // remove EOL characters
+                if let Some('\n') = input.chars().next_back() {
+                    input.pop();
+                } else if let Some('\r') = input.chars().next_back() {
+                    input.pop();
+                }
+
+                if input == "" {
+                    break;
+                }
+                print!("{}: sending...", APP_NAME_SHORT);
+                socket.send_to(input.as_bytes(), &ip_address).expect("Error sending message");
+                println!(" sent! Awaiting response");
+                let mut buf = [0; MAX_MSG_SIZE as usize];
             }
-            print!("sending...");
-            socket.send_to(input.as_bytes(), &ip_address);
-            println!(" sent! Awaiting response");
-            let mut buf = [0; MAX_MSG_SIZE];
         }
     } // socket closed
     println!("Connection to {} closed", ip_address);

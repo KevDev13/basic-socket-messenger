@@ -1,5 +1,5 @@
 [package]
-name = "socket-messages"
+name = "bsm"
 version = "0.1.0"
 authors = ["Kevin Garner <kevin@kgar.net>"]
 edition = "2018"

@@ -21,7 +21,7 @@ fn main() {
              .takes_value (true))
         .get_matches();
 
-    let host_ip = args.value_of("ip").unwrap();
+    let host_ip = args.value_of("host_ip").unwrap();
     let remote_ip = args.value_of("remote_ip").unwrap();
 
     {

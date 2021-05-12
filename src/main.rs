@@ -9,19 +9,25 @@ fn main() {
     let args = App::new(format!("{} - {}", APP_NAME_SHORT, APP_NAME_LONG))
         .version("0.1")
         .author("Kevin M. Garner <kevin@kgar.net>")
-        .arg(Arg::with_name("ip")
-             .short("i")
-             .long("ip")
+        .arg(Arg::with_name("host_ip")
+             .short("h")
+             .long("host")
              .required(true)
              .takes_value(true))
+        .arg(Arg::with_name("remote_ip")
+             .short("r")
+             .long("remote")
+             .required(true)
+             .takes_value (true))
         .get_matches();
 
-    let ip_address = args.value_of("ip").unwrap();
+    let host_ip = args.value_of("ip").unwrap();
+    let remote_ip = args.value_of("remote_ip").unwrap();
 
     {
-        let socket = UdpSocket::bind(ip_address).expect("Could not bind to IP address");
+        let socket = UdpSocket::bind(host_ip).expect("Could not bind to IP address");
 
-        println!("{}: Bound to IP {}", APP_NAME_SHORT, ip_address);
+        println!("{}: Bound to IP {}", APP_NAME_SHORT, host_ip);
 
         loop {
             println!("{}: Enter message to send. Enter blank message to close", APP_NAME_SHORT);
@@ -43,7 +49,7 @@ fn main() {
                     break;
                 }
                 print!("{}: sending...", APP_NAME_SHORT);
-                socket.send_to(input.as_bytes(), &ip_address).expect("Error sending message");
+                socket.send_to(input.as_bytes(), &remote_ip).expect("Error sending message");
                 println!(" sent! Awaiting response");
                 let mut buf = [0; MAX_MSG_SIZE as usize];
                 let (_, source) = socket.recv_from(&mut buf).expect("Error in receiving message");
@@ -53,5 +59,5 @@ fn main() {
             }
         }
     } // socket closed
-    println!("Connection to {} closed", ip_address);
+    println!("Connection to {} closed", remote_ip);
 }

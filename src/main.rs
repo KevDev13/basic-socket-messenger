@@ -26,7 +26,7 @@ fn main() {
         loop {
             println!("{}: Enter message to send. Enter blank message to close", APP_NAME_SHORT);
             let mut input = String::new();
-            let bytes = std::io::stdin().read_line(&mut input).expect("Error reading input");
+            let _ = std::io::stdin().read_line(&mut input).expect("Error reading input");
 
             if input.len() > MAX_MSG_SIZE as usize {
                 println!("{}: Max message size is {}", APP_NAME_SHORT, MAX_MSG_SIZE);
@@ -38,6 +38,7 @@ fn main() {
                     input.pop();
                 }
 
+                // if user wants to quit
                 if input == "" {
                     break;
                 }
@@ -45,6 +46,10 @@ fn main() {
                 socket.send_to(input.as_bytes(), &ip_address).expect("Error sending message");
                 println!(" sent! Awaiting response");
                 let mut buf = [0; MAX_MSG_SIZE as usize];
+                let (_, source) = socket.recv_from(&mut buf).expect("Error in receiving message");
+                let buffer_string = String::from_utf8_lossy(&buf);
+                println!("{}: Message from {}", APP_NAME_SHORT, source);
+                println!("{}", buffer_string);
             }
         }
     } // socket closed

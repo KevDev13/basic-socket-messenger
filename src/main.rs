@@ -10,7 +10,7 @@ fn main() {
         .version("0.1")
         .author("Kevin M. Garner <kevin@kgar.net>")
         .arg(Arg::with_name("host_ip")
-             .short("h")
+             .short("i")
              .long("host")
              .required(true)
              .takes_value(true))
@@ -50,7 +50,9 @@ fn main() {
                 }
                 print!("{}: sending...", APP_NAME_SHORT);
                 socket.send_to(input.as_bytes(), &remote_ip).expect("Error sending message");
-                println!(" sent! Awaiting response");
+                println!(" sent!");
+
+                // now get message
                 let mut buf = [0; MAX_MSG_SIZE as usize];
                 let (_, source) = socket.recv_from(&mut buf).expect("Error in receiving message");
                 let buffer_string = String::from_utf8_lossy(&buf);

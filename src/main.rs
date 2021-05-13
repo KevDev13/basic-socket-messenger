@@ -56,8 +56,8 @@ fn main() {
                 let mut buf = [0; MAX_MSG_SIZE as usize];
                 let (_, source) = socket.recv_from(&mut buf).expect("Error in receiving message");
                 let buffer_string = String::from_utf8_lossy(&buf);
-                println!("{}: Message from {}", APP_NAME_SHORT, source);
-                println!("{}", buffer_string);
+                println!("{}: Message from {}:", APP_NAME_SHORT, source);
+                print!("{}", buffer_string);
             }
         }
     } // socket closed
